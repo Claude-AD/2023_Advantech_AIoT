@@ -6,7 +6,7 @@ from tracing import car
 
 model = YOLO('./model/yolov8n.pt')
 
-video = './video/night.mp4'
+video = './dataset/cctv.gif'
 cap = cv2.VideoCapture(video)
 
 cars = []
@@ -54,20 +54,6 @@ def accident(boxes, shape):
       if distance < threshold and (ret1 or ret2):
         for i in range(15): print("ACCIDENT")
   return white
-
-
-
-def accident2(boxes, shape):
-  cordi = boxes.xywh
-  ids = boxes.id
-  white = np.zeros(shape, dtype=np.uint8)
-
-  n = len(cordi)
-  if n <= 1 or ids == None:
-    return white
-
-
-
 
 if cap.isOpened():
   while True:
