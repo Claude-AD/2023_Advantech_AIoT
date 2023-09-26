@@ -6,7 +6,7 @@ from tracing import car
 
 model = YOLO('./model/yolov8n.pt')
 
-video = './dataset/cctv.gif'
+video = './dataset/test/night.gif'
 cap = cv2.VideoCapture(video)
 
 cars = []
@@ -18,7 +18,6 @@ def accident(boxes, shape):
   n = len(cordi)
   if n <= 1 or ids == None:
     return white
-
   global cars
   if len(cars) < int(ids.max().item()):
     for _ in range(int(ids.max().item()) - len(cars)):
@@ -30,30 +29,14 @@ def accident(boxes, shape):
   for n1, n2 in arr:
     p1 = (int(cordi[n1][0].item()), int(cordi[n1][1].item()))
     p2 = (int(cordi[n2][0].item()), int(cordi[n2][1].item()))
-    distance = np.linalg.norm(np.array(p1) - np.array(p2))
-
-    sums = 0
-    for i in range(2,4):
-      sums += cordi[n1][i]
-      sums += cordi[n2][i]
-    threshold = sums/4
-
-    if distance < threshold*2:
-      id1 = int(ids[n1].item())-1
-      id2 = int(ids[n2].item())-1
-      if cars[id1] == 0:
-        cars[id1] = car(p1[0], p1[1])
-        continue
-      if cars[id2] == 0:
-        cars[id2] = car(p2[0], p2[1])
-        continue
-      
-      ret1, white = cars[id1].trace(p1[0], p1[1], white, threshold, p2)
-      ret2, white = cars[id2].trace(p2[0], p2[1], white, threshold, p1)
-      
-      if distance < threshold and (ret1 or ret2):
-        for i in range(15): print("ACCIDENT")
+    
+    th_w = cordi[n1][2]/2 + cordi[n2][2]/2
+    th_h = cordi[n1][3]/2 + cordi[n2][3]/2
+    
+    if np.abs(p1[0]-p2[0]) < th_w and np.abs(p1[1]-p2[1]) < th_h:
+      for i in range(15): print("OVERLAP")
   return white
+
 
 if cap.isOpened():
   while True:
