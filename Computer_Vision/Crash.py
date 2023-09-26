@@ -16,23 +16,22 @@ def crash(boxes, shape):
   # Generate Car object
   global cars
   if len(cars) < int(ids.max().item()):
-    for i in range(len(cars)+1, int(ids.max().item())+1):
+    for _ in range(len(cars)+1, int(ids.max().item())+1):
       cars.append(Car())
 
+  # Add cordinate
+  for i in range(n):
+    cars[int(ids[i].item())-1].add(int(cordi[i][0].item()), int(cordi[i][1].item()))
 
   # Crash checking
   arr = [i for i in range(n)]
   arr = list(combinations(arr, 2))
-
   for n1, n2 in arr:
     p1 = (int(cordi[n1][0].item()), int(cordi[n1][1].item()))
     p2 = (int(cordi[n2][0].item()), int(cordi[n2][1].item()))
     
-    # Add cordinate
     id1 = int(ids[n1].item())-1
     id2 = int(ids[n2].item())-1
-    cars[id1].add(p1[0], p1[1])
-    cars[id2].add(p2[0], p2[1])
 
     # Overlap checking
     th_w = cordi[n1][2]/2 + cordi[n2][2]/2
