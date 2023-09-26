@@ -1,13 +1,37 @@
 import cv2
 import numpy as np
+from collections import deque
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 
-class car:
-    def __init__(self, x, y):
-        self.cordi_x = [x]
-        self.cordi_y = [y]
+class Car:
+    def __init__(self):
+        self.cordi_x = deque()
+        self.cordi_y = deque()
 
+    # Manage cordinate
+    def add(self, x, y):
+        if len(self.cordi_x) > 30:
+            self.cordi_x.popleft()
+        if len(self.cordi_y) > 30:
+            self.cordi_y.popleft()
+        self.cordi_x.append(x)
+        self.cordi_y.append(y)
+        return
+    
+    def print_cordi(self):
+        print(self.cordi_x)
+        print(self.cordi_y)
+
+    # Speed Algorithm
+    def speed(self):
+        pass
+    
+    # Angle Algorithm
+    def angle(self):
+        pass
+
+    # Estimate Trajectory
     def trace(self, x, y, white, threshold, opponent):
         if 0.95< self.cordi_x[-1]/x <1.05 and 0.95< self.cordi_y[-1]/y <1.05:
             pass
