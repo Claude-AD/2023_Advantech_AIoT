@@ -8,12 +8,14 @@ class Car:
     def __init__(self):
         self.cordi_x = deque()
         self.cordi_y = deque()
+        self.frame = 1
+        self.a = []
 
     # Manage cordinate
     def add(self, x, y):
-        if len(self.cordi_x) > 30:
+        if len(self.cordi_x) > 10:
             self.cordi_x.popleft()
-        if len(self.cordi_y) > 30:
+        if len(self.cordi_y) > 10:
             self.cordi_y.popleft()
         self.cordi_x.append(x)
         self.cordi_y.append(y)
@@ -22,6 +24,19 @@ class Car:
     def print_cordi(self):
         print(self.cordi_x)
         print(self.cordi_y)
+
+    # calculate acceleration
+    def accel(self):
+        n = len(self.cordi_x)
+        half = int(n/2)
+        vx = [self.cordi_x[half] - self.cordi_x[0],
+              self.cordi_x[-1] - self.cordi_x[half]]
+        vy = [self.cordi_y[half] - self.cordi_y[0],
+              self.cordi_y[-1] - self.cordi_y[half]]
+        ax = (vx[1] - vx[0]) / 2
+        ay = (vy[1] - vy[0]) / 2
+        self.a.append((ax**2+ay**2)**(1/2))
+        print(self.a)
 
     # Speed Algorithm
     def speed(self):

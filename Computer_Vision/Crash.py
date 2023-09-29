@@ -8,9 +8,9 @@ def crash(boxes, shape):
   cordi = boxes.xywh
   ids = boxes.id
   white = np.zeros(shape, dtype=np.uint8)
-
   n = len(cordi)
-  if n <= 1 or ids == None:
+  
+  if ids == None:
     return white
   
   # Generate Car object
@@ -19,9 +19,22 @@ def crash(boxes, shape):
     for _ in range(len(cars)+1, int(ids.max().item())+1):
       cars.append(Car())
 
-  # Add cordinate
+  # Add cordinate & update self.frame
   for i in range(n):
-    cars[int(ids[i].item())-1].add(int(cordi[i][0].item()), int(cordi[i][1].item()))
+    id = int(ids[i].item())-1
+    cars[id].add(int(cordi[i][0].item()), int(cordi[i][1].item()))
+    if len(cars[id].a) > 0:
+      cars[id].frame += 1
+      if cars[id].frame == 10:
+        print(f"\nid: {id+1}")
+        cars[id].accel()
+        cars[id].speed()
+      elif cars[id].frame > 10:
+        cars[id].frame = 0
+        cars[id].a.clear()
+
+  if n <= 1:
+    return white
 
   # Crash checking
   arr = [i for i in range(n)]
@@ -39,6 +52,15 @@ def crash(boxes, shape):
 
     if np.abs(p1[0]-p2[0]) < th_w and np.abs(p1[1]-p2[1]) < th_h:
       print(f"\nid:{ids[n1]}, id:{ids[n2]} OVERLAP")
-      cars[id1].print_cordi()
+      if len(cars[id1].a) > 0 or len(cars[id1].cordi_x) < 3:
+        pass
+      else:
+        cars[id1].accel()
+
+      if len(cars[id2].a) > 0 or len(cars[id2].cordi_x) < 3:
+        pass
+      else:
+        cars[id2].accel()
+
       
   return white
