@@ -34,10 +34,14 @@ class Car:
         if a == 0:
             return 1
         return a
-
-    # Angle Algorithm
-    def angle(self):
-        pass
+    
+    def avg_cordi(self):
+        n = len(self.cordi_x)
+        sum_x, sum_y = 0,0
+        for i in range(n-1, 0, -1):
+            sum_x += self.cordi_x[i]
+            sum_y += self.cordi_y[i]
+        return (sum_x/n, sum_y/n)
 
     # Estimate Trajectory
     def trace(self, x, y, white, threshold, opponent):
@@ -91,12 +95,12 @@ class Overlap():
         self.is_on = True
         self.frame = 1
         self.alpha = 0
+        self.angle1 = []
+        self.angle2 = []
     
     # Speed Algorithm
     def speed(self):
-        if len(self.car1.cordi_x) < 3:
-            self.is_on = False
-        elif len(self.car2.cordi_x) < 3:
+        if len(self.car1.cordi_x) < 3 or len(self.car2.cordi_x) < 3:
             self.is_on = False
         else:
             self.a1.append(self.car1.accel())
@@ -105,4 +109,23 @@ class Overlap():
                 self.alpha = max(self.a1)/min(self.a1) + max(self.a2)/min(self.a2)
                 print(f"id_{self.car1.id:02}: [{self.a1[0]:.3f} | {self.a1[1]:.3f}]")
                 print(f"id_{self.car2.id:02}: [{self.a2[0]:.3f} | {self.a2[1]:.3f}]")
+
+    # Angle Algorithm
+    def angle(self):
+        if self.is_on:
+            self.angle1.append(self.car1.avg_cordi())
+            self.angle2.append(self.car2.avg_cordi())
+            if len(self.angle1) == 1:
+                self.angle1.append((self.car1.cordi_x[-1], self.car1.cordi_y[-1]))
+                self.angle2.append((self.car2.cordi_y[-1], self.car2.cordi_y[-1]))
+            if len(self.angle1) == 3:
+                a = tuple(elem[0]- elem[1] for elem in zip(self.angle1[0], self.angle1[1]))
+                b = tuple(elem[0]- elem[1] for elem in zip(self.angle1[2], self.angle1[1]))
+                angle1 = np.arccos(np.dot(a,b)/np.sqrt(a[0]**2+a[1]**2)/np.sqrt(b[0]**2+b[1]**2))*180/np.pi
+                
+                a = tuple(elem[0]- elem[1] for elem in zip(self.angle2[0], self.angle2[1]))
+                b = tuple(elem[0]- elem[1] for elem in zip(self.angle2[2], self.angle2[1]))
+                angle2 = np.arccos(np.dot(a,b)/np.sqrt(a[0]**2+a[1]**2)/np.sqrt(b[0]**2+b[1]**2))*180/np.pi
+                print(f"{angle1:.3f}, {angle2:.3f}")
                 print(f"******** alpha = {self.alpha:.3f} ********")
+                print(f"******** beta  = {angle1 + angle2:.3f} ********")

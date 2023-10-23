@@ -33,6 +33,7 @@ def crash(boxes, shape, previous):
       if ovl.frame == 10:
         print("\n")
         ovl.speed()
+        ovl.angle()
       elif ovl.frame > 10:
         ovl.is_on = False
 
@@ -65,5 +66,6 @@ def crash(boxes, shape, previous):
       if exist == False:
         overlaps.append(Overlap(cars[id1],cars[id2]))
         overlaps[-1].speed()
+        overlaps[-1].angle()
       
   return white, current
