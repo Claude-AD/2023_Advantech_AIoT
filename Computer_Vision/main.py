@@ -1,6 +1,8 @@
 import cv2
 from ultralytics import YOLO
 from Crash import crash
+from Car_Manager import *
+import pandas as pd
 
 model = YOLO('./model/yolov8n.pt')
 
@@ -16,10 +18,12 @@ if cap.isOpened():
     white, previous = crash(results[0].boxes, img.shape, previous)
     
     img = cv2.addWeighted(img, 1, white, 1, 0)
-    #img = cv2.resize(img, dsize=(0,0), fx=0.5, fy=0.5)
+    img = cv2.resize(img, dsize=(0,0), fx=0.5, fy=0.5)
     cv2.imshow('img', img)
 
-    if cv2.waitKey(10) & 0xFF == ord('q'):
-        break
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+      pd_data = pd.DataFrame(data)
+      pd_data.to_csv('result.csv', mode='a')
+      break
 else:
   print("unable to use camera")

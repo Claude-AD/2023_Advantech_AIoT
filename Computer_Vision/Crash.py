@@ -30,6 +30,7 @@ def crash(boxes, shape, previous):
   for ovl in overlaps:
     if ovl.is_on:
       ovl.frame += 1
+      ret, white = ovl.trace(white, 1)
       if ovl.frame == 10:
         print("\n")
         ovl.speed()
@@ -67,5 +68,5 @@ def crash(boxes, shape, previous):
         overlaps.append(Overlap(cars[id1],cars[id2]))
         overlaps[-1].speed()
         overlaps[-1].angle()
-      
+
   return white, current
