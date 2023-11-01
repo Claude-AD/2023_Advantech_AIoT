@@ -10,9 +10,10 @@ def crash(boxes, shape, previous):
   white = np.zeros(shape, dtype=np.uint8)
   n = len(cordi)
   current = []
+  is_accident = False
   
   if ids == None:
-    return white, current
+    return white, current, is_accident
   
   # Generate Car object
   global cars
@@ -30,16 +31,17 @@ def crash(boxes, shape, previous):
   for ovl in overlaps:
     if ovl.is_on:
       ovl.frame += 1
-      ret, white = ovl.trace(white, 1)
+      white = ovl.trace(white)
       if ovl.frame == 10:
         print("\n")
         ovl.speed()
         ovl.angle()
+        is_accident =  ovl.prediction()
       elif ovl.frame > 10:
         ovl.is_on = False
 
   if n <= 1:
-    return white, current
+    return white, current, is_accident
 
   # Crash checking
   arr = [i for i in range(n)]
@@ -69,4 +71,4 @@ def crash(boxes, shape, previous):
         overlaps[-1].speed()
         overlaps[-1].angle()
 
-  return white, current
+  return white, current, is_accident

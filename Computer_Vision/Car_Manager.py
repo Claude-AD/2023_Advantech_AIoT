@@ -5,10 +5,12 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 import joblib
 
-data = {'alpha':[],
-        'beta' :[],
-        'gamma':[],
-        'accident':[]}
+# data = {'alpha':[],
+#         'beta' :[],
+#         'gamma':[],
+#         'accident':[]}
+model = joblib.load('./accident/test03.pkl')
+plag = []
 
 class Car:
     def __init__(self, id):
@@ -58,9 +60,11 @@ class Overlap():
         self.a2 = []
         self.is_on = True
         self.frame = 1
+        
         self.alpha = 0
         self.angle1 = []
         self.angle2 = []
+        self.beta = 0
         self.gamma = []
 
     # Speed Algorithm
@@ -72,8 +76,8 @@ class Overlap():
             self.a2.append(self.car2.accel())
             if len(self.a1) == 2:
                 self.alpha = max(self.a1)/min(self.a1) + max(self.a2)/min(self.a2)
-                print(f"id_{self.car1.id:02}: [{self.a1[0]:.3f} | {self.a1[1]:.3f}]")
-                print(f"id_{self.car2.id:02}: [{self.a2[0]:.3f} | {self.a2[1]:.3f}]")
+                print(f"id_{self.car1.id:02}")
+                print(f"id_{self.car2.id:02}")
 
     # Angle Algorithm
     def angle(self):
@@ -91,28 +95,10 @@ class Overlap():
                 a = tuple(elem[0]- elem[1] for elem in zip(self.angle2[0], self.angle2[1]))
                 b = tuple(elem[0]- elem[1] for elem in zip(self.angle2[2], self.angle2[1]))
                 angle2 = np.arccos(np.dot(a,b)/np.sqrt(a[0]**2+a[1]**2)/np.sqrt(b[0]**2+b[1]**2))*180/np.pi
-                print(f"{angle1:.3f}, {angle2:.3f}")
-                print(f"******** alpha = {self.alpha:.3f} ********")
-                print(f"******** beta  = {angle1 + angle2:.3f} ********")
-                print(f"******** gamma = {min(self.gamma):.3f} ********")
-                # data['alpha'].append(self.alpha)
-                # data['beta'].append(angle1 + angle2)
-                # data['gamma'].append(min(self.gamma))
-                # if self.alpha > 10 and min(self.gamma) < 100:
-                #     data['accident'].append(1)
-                # else: data['accident'].append(0)
-
-                model = joblib.load('./accident/test01.pkl')
-                prediction = model.predict([[self.alpha, angle1 + angle2, min(self.gamma)]])
-                print(f"{prediction.item()*100:.2f}%")
-                if prediction.item()*100 > 50:
-                    print('********ACCIDENT********')
-                    print('********ACCIDENT********')
-                    print('********ACCIDENT********')
+                self.beta = angle1 + angle2
                     
     # Estimate Trajectory
-    def trace(self, white, threshold):
-        ret = False
+    def trace(self, white):
         if self.is_on:
             gamma = 1000000
             for car in [self.car1, self.car2]:
@@ -139,5 +125,32 @@ class Overlap():
                     gamma = min(gamma, np.linalg.norm(np.array(p) - np.array((opponent.cordi_x[-1], opponent.cordi_y[-1]))))
                 cv2.polylines(white, [np.array(points)], isClosed=False, color=(0, 255, 0), thickness=3)
         self.gamma.append(gamma)
+        return white
+    
+    def prediction(self):
+        alpha, beta, gamma = self.alpha, self.beta, min(self.gamma)
+        
+        # print(f"{angle1:.3f}, {angle2:.3f}")
+        print(f"******** alpha = {alpha:.3f} ********")
+        print(f"******** beta  = {beta:.3f} ********")
+        print(f"******** gamma = {gamma:.3f} ********")
+        if alpha == np.NaN or beta == np.NaN or gamma == np.NaN:
+            return False
 
-        return ret, white
+        # data['alpha'].append(self.alpha)
+        # data['beta'].append(angle1 + angle2)
+        # data['gamma'].append(min(self.gamma))
+        # data['accident'].append(0)
+        
+        prediction = model.predict([[alpha, beta, gamma]])
+        
+        w1, w2, w3, w4 = 0.7, 0.1, 0.1, 0.1
+        
+        probability = prediction.item()*w1 + (alpha>10)*w2 + (beta>50)*w3 + (gamma<100)*w4
+        print(f"{probability*100:.2f}%")
+        
+        if probability > 0.5:
+            for _ in range(10): print('********ACCIDENT********')
+            plag = [probability, alpha, beta, gamma]
+            return True
+        return False
