@@ -4,6 +4,7 @@ from Car_Manager import Car, Overlap
 
 cars = []
 overlaps = []
+
 def crash(boxes, shape, previous):
   cordi = boxes.xywh
   ids = boxes.id
@@ -11,9 +12,10 @@ def crash(boxes, shape, previous):
   n = len(cordi)
   current = []
   is_accident = False
+  plag = 0
   
   if ids == None:
-    return white, current, is_accident
+    return white, current, is_accident, plag
   
   # Generate Car object
   global cars
@@ -36,12 +38,12 @@ def crash(boxes, shape, previous):
         print("\n")
         ovl.speed()
         ovl.angle()
-        is_accident =  ovl.prediction()
+        is_accident, plag =  ovl.prediction()
       elif ovl.frame > 10:
         ovl.is_on = False
 
   if n <= 1:
-    return white, current, is_accident
+    return white, current, is_accident, plag
 
   # Crash checking
   arr = [i for i in range(n)]
@@ -71,4 +73,4 @@ def crash(boxes, shape, previous):
         overlaps[-1].speed()
         overlaps[-1].angle()
 
-  return white, current, is_accident
+  return white, current, is_accident, plag

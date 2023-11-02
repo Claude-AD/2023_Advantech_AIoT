@@ -10,7 +10,6 @@ import joblib
 #         'gamma':[],
 #         'accident':[]}
 model = joblib.load('./accident/test03.pkl')
-plag = []
 
 class Car:
     def __init__(self, id):
@@ -129,13 +128,14 @@ class Overlap():
     
     def prediction(self):
         alpha, beta, gamma = self.alpha, self.beta, min(self.gamma)
+        plag = 0
         
         # print(f"{angle1:.3f}, {angle2:.3f}")
         print(f"******** alpha = {alpha:.3f} ********")
         print(f"******** beta  = {beta:.3f} ********")
         print(f"******** gamma = {gamma:.3f} ********")
         if alpha == np.NaN or beta == np.NaN or gamma == np.NaN:
-            return False
+            return False, plag
 
         # data['alpha'].append(self.alpha)
         # data['beta'].append(angle1 + angle2)
@@ -151,6 +151,6 @@ class Overlap():
         
         if probability > 0.5:
             for _ in range(10): print('********ACCIDENT********')
-            plag = [probability, alpha, beta, gamma]
-            return True
-        return False
+            plag = (probability, alpha, beta, gamma)
+            return True, plag
+        return False, plag

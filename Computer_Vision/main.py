@@ -1,7 +1,6 @@
 import cv2
 from ultralytics import YOLO
 from Crash import crash
-from Car_Manager import plag
 from collections import deque
 
 model = YOLO('./model/yolov8n.pt')
@@ -30,33 +29,40 @@ if cap.isOpened():
     
     results = model.track(frame, persist=True, verbose=False)
     img = results[0].plot()
-    white, previous, is_accident = crash(results[0].boxes, img.shape, previous)
+    white, previous, is_accident, plag = crash(results[0].boxes, img.shape, previous)
     
     img = cv2.addWeighted(img, 1, white, 1, 0)
-    # img = cv2.resize(img, dsize=(0,0), fx=0.5, fy=0.5)
-    cv2.imshow('img', img)
+    # cv2.imshow('img', img)
     # out.write(img)
     
     
     if is_accident:
       sending.append([img, plag])
       cnt = 1
-      accident_video.append([*sending])
+      accident_video.extend([*sending])
     else:
       sending.append([img])  
 
     '''sending 보내기'''
-    print(len(sending))
     
+    FRAME_LEN = 30
     if cnt > 0:
       cnt += 1
       accident_video.append([img])
-    if cnt >= 5:
+    
+    if cnt >= FRAME_LEN:
       cnt = 0
-      '''accident_video[5:] 보내기'''
+      ########
+      for i in range(len(accident_video)):
+        cv2.imshow('img', accident_video[i][0])
+        if ret == 0 or (cv2.waitKey(1) & 0xFF == ord('q')):
+          break
+      ########
+      
+      '''accident_video 보내기'''
       accident_video.clear()
       
-    if len(sending) > 15:
+    if len(sending) > FRAME_LEN:
       sending.popleft()
       
   # pd_data = pd.DataFrame(data)
