@@ -3,11 +3,11 @@ from ultralytics import YOLO
 from Crash import crash
 from collections import deque
 
-model = YOLO('./model/yolov8n.pt')
-
-# video = './dataset/test/part2.mp4'
+# video = './dataset/test/part1.mp4'
 video = './dataset/test/cctv.gif'
 cap = cv2.VideoCapture(video)
+
+model = YOLO('./model/yolov8n.pt')
 
 previous = []
 sending = deque([])
@@ -32,20 +32,19 @@ if cap.isOpened():
     white, previous, is_accident, plag = crash(results[0].boxes, img.shape, previous)
     
     img = cv2.addWeighted(img, 1, white, 1, 0)
-    # cv2.imshow('img', img)
+    cv2.imshow('img', img)
     # out.write(img)
     
     
-    if is_accident:
-      sending.append([img, plag])
-      cnt = 1
-      accident_video.extend([*sending])
-    else:
-      sending.append([img])  
-
-    '''sending 보내기'''
+    sending.append([img])
+    '''sending(이미지) 보내기'''
     
-    FRAME_LEN = 30
+    if is_accident:
+      '''plag 보내기'''
+      cnt = 1
+      accident_video.extend([*sending])  
+    
+    FRAME_LEN = 35
     if cnt > 0:
       cnt += 1
       accident_video.append([img])

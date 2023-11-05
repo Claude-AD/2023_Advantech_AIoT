@@ -144,12 +144,12 @@ class Overlap():
         
         prediction = model.predict([[alpha, beta, gamma]])
         
-        w1, w2, w3, w4 = 0.7, 0.1, 0.1, 0.1
+        w1, w2, w3, w4 = 0.6, 0.15, 0.10, 0.15
         
-        probability = prediction.item()*w1 + (alpha>10)*w2 + (beta>50)*w3 + (gamma<100)*w4
+        probability = prediction.item()*w1 + (alpha>10)*w2 + (beta>50)*w3 + (gamma<150)*w4
         print(f"{probability*100:.2f}%")
         
-        if probability > 0.5:
+        if probability > 0.4:
             for _ in range(10): print('********ACCIDENT********')
             plag = (probability, alpha, beta, gamma)
             return True, plag
