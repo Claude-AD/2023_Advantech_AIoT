@@ -1,6 +1,6 @@
 from Vision import process_frame
-from Data import receive_plag_data
-from EdgeAgent import generate_edgeAgent, sendDataToDataHub
+from datahub.Data import receive_plag_data
+from datahub.EdgeAgent import generate_edgeAgent, sendDataToDataHub
 
 def main():
     edge_agent = generate_edgeAgent()  # EdgeAgent 인스턴스 생성 및 설정
