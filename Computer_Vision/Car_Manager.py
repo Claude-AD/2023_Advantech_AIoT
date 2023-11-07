@@ -30,25 +30,25 @@ class Car:
     # calculate acceleration
     def accel(self):
         n = len(self.cordi_x)
-        half = int(n/2)
+        half = int(n / 2)
         vx = [self.cordi_x[half] - self.cordi_x[0],
               self.cordi_x[-1] - self.cordi_x[half]]
         vy = [self.cordi_y[half] - self.cordi_y[0],
               self.cordi_y[-1] - self.cordi_y[half]]
         ax = (vx[1] - vx[0]) / 2
         ay = (vy[1] - vy[0]) / 2
-        a = (ax**2+ay**2)**(1/2)
+        a = (ax ** 2 + ay ** 2) ** (1 / 2)
         if a == 0:
             return 1
         return a
     
     def avg_cordi(self):
         n = len(self.cordi_x)
-        sum_x, sum_y = 0,0
-        for i in range(n-1, 0, -1):
+        sum_x, sum_y = 0, 0
+        for i in range(n - 1, 0, -1):
             sum_x += self.cordi_x[i]
             sum_y += self.cordi_y[i]
-        return (sum_x/n, sum_y/n)
+        return (sum_x / n, sum_y / n)
     
 
 class Overlap():
@@ -74,7 +74,7 @@ class Overlap():
             self.a1.append(self.car1.accel())
             self.a2.append(self.car2.accel())
             if len(self.a1) == 2:
-                self.alpha = max(self.a1)/min(self.a1) + max(self.a2)/min(self.a2)
+                self.alpha = max(self.a1) / min(self.a1) + max(self.a2) / min(self.a2)
                 print(f"id_{self.car1.id:02}")
                 print(f"id_{self.car2.id:02}")
 

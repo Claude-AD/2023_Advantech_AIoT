@@ -74,3 +74,4 @@ def crash(boxes, shape, previous):
         overlaps[-1].angle()
 
   return white, current, is_accident, plag
+
