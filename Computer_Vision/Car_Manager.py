@@ -151,6 +151,6 @@ class Overlap():
         
         if probability > 0.4:
             for _ in range(10): print('********ACCIDENT********')
-            plag = (probability, alpha, beta, gamma)
+            plag = probability*100
             return True, plag
         return False, plag

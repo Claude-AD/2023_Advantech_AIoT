@@ -29,8 +29,6 @@ def process_frame(fps):
     results = model.track(frame, persist=True, verbose=False)
     img = results[0].plot()
     white, previous, is_accident, plag = crash(results[0].boxes, img.shape, previous)
-
-    img = cv2.addWeighted(img, 1, white, 1, 0)
     
     sending.append([img])
     PLAG = None
