@@ -5,8 +5,8 @@ from config import *
 folder_path = './BE/Accident'
     
 bucket = 'son-hyunho-icn-reviewweb-bucket'
-s3_filename = 'cctv'
-s3_videoname = 'accident'
+s3_filename = 'cctv.jpg'
+s3_videoname = 'accident.mp4'
 image_key = f'videos/{s3_filename}'
 video_key = f'videos/{s3_videoname}'
 image_url = f'https://{bucket}.s3.amazonaws.com/{image_key}'
