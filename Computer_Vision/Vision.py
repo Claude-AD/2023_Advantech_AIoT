@@ -56,28 +56,3 @@ def process_frame(fps):
         fps = 0
         return img, PLAG, fps, VIDEO # 1 second
 
-
-##################################################################
-if __name__ == "__main__":
-    if cap.isOpened():
-        while True:
-            img, plag = process_frame()
-
-            if plag is not None:
-                # Accident detected, process plag data
-                print(f"Detected accident, sending plag data: {plag}")
-                # Here you would send the plag data to your data.py or wherever it needs to go
-
-            if img is not None:
-                cv2.imshow('img', img)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break  # Exit if 'q' is pressed
-            else:
-                break  # Exit if no more frames to process
-
-    else:
-        print("Unable to open camera")
-
-    cap.release()
-    cv2.destroyAllWindows()
-##################################################################
