@@ -8,6 +8,6 @@ def create_edge_data_from_plag(plag, device_id, tag_name):
 
 def receive_plag_data(plag):
     device_id = "Device1"  # Device1이 데이터허브 내 CCTV 디바이스
-    tag_name = "TTag1"  # 태그는 Text타입의 TTag1
+    tag_name = "ATag1"  # 태그는 Analog타입의 ATag1
     edge_data = create_edge_data_from_plag(plag, device_id, tag_name)
     return edge_data
