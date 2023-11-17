@@ -8,6 +8,8 @@ def main():
     edge_agent = generate_edgeAgent()  # EdgeAgent 인스턴스 생성 및 설정
     fps = 0
     while True:
+        #sound
+        
         img, plag, fps, video = process_frame(fps)  # img와 plag 혹은 img와 None을 받음
 
         if img is None and plag is None: # img, plag 둘 다 None이면 영상이 끝난것이니 종료
@@ -17,6 +19,9 @@ def main():
             pass
         else:          # 1초(30프레임)마다 사진 보내기
             upload_image(img)   #'''img 보내기'''
+            # cv2.imshow("img", img)
+            # if cv2.waitKey(1) & 0xFF == ord("q"):
+            #     break
             
         if plag is not None: # plag가 None이 아닌 것이 리턴된거면 is_accident이니 처리
             # 사고가 감지되었을 때 처리
@@ -34,7 +39,7 @@ def main():
             out.release()
             
             upload_mp4('./output.mp4') #'''./output.mp4 보내기'''
-            time.sleep(5)   # 5초간 기다리기
+            # time.sleep(5)   # 5초간 기다리기
 
 if __name__ == "__main__":
     main()
