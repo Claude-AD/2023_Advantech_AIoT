@@ -4,12 +4,56 @@ from datahub.EdgeAgent import generate_edgeAgent, sendDataToDataHub
 import cv2, time
 from post import upload_image, upload_mp4
 
+import pyaudio
+import time
+import numpy as np
+
+# Audio Stream Settings
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 44100
+CHUNK = 1024
+
 def main():
     edge_agent = generate_edgeAgent()  # EdgeAgent 인스턴스 생성 및 설정
     fps = 0
+
+    # Start PyAudio
+    audio = pyaudio.PyAudio()
+
+    # Open Stream
+    stream = audio.open(format=FORMAT, channels=CHANNELS, 
+                        rate=RATE, input=True,
+                        frames_per_buffer=CHUNK)
+
+    print("Recording...")
+
+    # Variable to store sound level
+    sound_level_list = []
+    last_time = time.time()
+
     while True:
-        #sound
-        
+        ##### ---------- sound ---------- #####
+        current_time = time.time()
+        over_threshold = False
+
+        if current_time - last_time >= 1:
+            sound_level_average = np.mean(sound_level_list)
+            if sound_level_average >= 500:
+                over_threshold = True
+
+            print(f'Sound Level during 1sec: {sound_level_average}') ##### Have to fix this code to sending data to Datahub #####
+            sound_level_list = []
+            last_time = current_time
+
+        # Read audio stream data
+        data = np.fromstring(stream.read(CHUNK), dtype=np.int16)
+
+        # Calculate mean sound level
+        sound_level = np.average(np.abs(data))
+        sound_level_list.append(sound_level)
+
+        ##### --------- VISION ---------- #####
         img, plag, fps, video = process_frame(fps)  # img와 plag 혹은 img와 None을 받음
 
         if img is None and plag is None: # img, plag 둘 다 None이면 영상이 끝난것이니 종료
