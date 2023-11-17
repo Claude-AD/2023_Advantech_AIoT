@@ -4,8 +4,8 @@ from Crash import crash
 from collections import deque
 import copy
 
-# video = './dataset/test/cctv.gif'
-video = 0
+video = './dataset/test/cctv.gif'
+# video = 0
 cap = cv2.VideoCapture(video)
 
 model = YOLO('./model/yolov8m.pt')
@@ -26,7 +26,7 @@ def process_frame(fps):
     if not ret:
         return None, None, fps, None  # No more frames or error
     
-    FPS = int(cap.get(cv2.CAP_PROP_FPS))
+    FPS = int(cap.get(cv2.CAP_PROP_FPS)) - 10
     results = model.track(frame, persist=True, verbose=False, conf=0.4)
     img = results[0].plot()
     white, previous, is_accident, plag = crash(results[0].boxes, img.shape, previous)
@@ -39,7 +39,7 @@ def process_frame(fps):
         accident_video.extend([*sending])
         PLAG = plag
 
-    FRAME_LEN = 35 # repository of img files
+    FRAME_LEN = 50 # repository of img files
     if cnt > 0:
         cnt += 1
         accident_video.append([img])
