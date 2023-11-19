@@ -9,7 +9,7 @@ import joblib
 #         'beta' :[],
 #         'gamma':[],
 #         'accident':[]}
-model = joblib.load('./accident/test03.pkl')
+model = joblib.load('./accident/svm.pkl')
 
 class Car:
     def __init__(self, id):
@@ -142,16 +142,16 @@ class Overlap():
         # data['gamma'].append(min(self.gamma))
         # data['accident'].append(0)
         
-        prediction = model.predict([[alpha, beta, gamma]])
+        prediction = model.predict_proba([[alpha, beta, gamma]])[0][1]
         
-        w1, w2, w3, w4 = 0.6, 0.15, 0.10, 0.15
+        w1, w2, w3, w4 = 1, 0.05, 0.05, 0.05
         
-        probability = prediction.item()*w1 + (alpha>10)*w2 + (beta>50)*w3 + (gamma<150)*w4
+        probability = prediction*w1 + (alpha>10)*w2 + (beta>50)*w3 + (gamma<150)*w4
         if probability > 1: probability = 1
         if probability < 0: probability = 0
         print(f"{probability*100:.2f}%")
         
-        if probability > 0.45:
+        if probability > 0.5:
             for _ in range(10): print('********ACCIDENT********')
             plag = probability*100
             return True, plag
