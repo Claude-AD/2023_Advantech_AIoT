@@ -4,7 +4,7 @@ from Crash import crash
 from collections import deque
 import copy
 
-video = './dataset/test/cctv.gif'
+video = './dataset/test/video.mp4'
 # video = 0
 cap = cv2.VideoCapture(video)
 

@@ -134,7 +134,7 @@ class Overlap():
         print(f"******** alpha = {alpha:.3f} ********")
         print(f"******** beta  = {beta:.3f} ********")
         print(f"******** gamma = {gamma:.3f} ********")
-        if alpha == np.NaN or beta == np.NaN or gamma == np.NaN:
+        if np.isnan(alpha) or np.isnan(beta) or np.isnan(gamma):
             return False, plag
 
         # data['alpha'].append(self.alpha)
@@ -147,9 +147,11 @@ class Overlap():
         w1, w2, w3, w4 = 0.6, 0.15, 0.10, 0.15
         
         probability = prediction.item()*w1 + (alpha>10)*w2 + (beta>50)*w3 + (gamma<150)*w4
+        if probability > 1: probability = 1
+        if probability < 0: probability = 0
         print(f"{probability*100:.2f}%")
         
-        if probability > 0.4:
+        if probability > 0.45:
             for _ in range(10): print('********ACCIDENT********')
             plag = probability*100
             return True, plag
