@@ -1,6 +1,9 @@
 import ffmpeg, os
 
 def stream_accident():
+    while(os.popen(f"ps aux | grep '[p]ython {'stream.py'}'").read()!=''):
+        sleep(1)
+
     os.system("ffmpeg -i output.mp4 -f lavfi -i anullsrc -c:v copy -c:a aac -shortest audio.mp4")
     
     input_video = './audio.mp4'

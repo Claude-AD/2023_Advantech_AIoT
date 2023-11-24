@@ -8,7 +8,7 @@ def analogTagConfig():
                              description='ATag1',
                              readOnly=False,
                              arraySize=0,
-                             spanHigh=1000,
+                             spanHigh=2000,
                              spanLow=0,
                              engineerUnit='',
                              integerDisplayFormat=4,

@@ -2,38 +2,32 @@ from Vision import process_frame
 from datahub.Data import receive_plag_data
 from datahub.EdgeAgent import generate_edgeAgent, sendDataToDataHub
 import cv2, time, os
-from post import upload_image
-
-import pyaudio
 import numpy as np
-# from Stream import stream_accident
+import pyaudio, time
 
-# Audio Stream Settings
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 CHUNK = 1024
+MAX = 0
+is_on = False
 
+import subprocess
 def main():
-    edge_agent = generate_edgeAgent()  # EdgeAgent 인스턴스 생성 및 설정
-    fps = 0
-
-    # Start PyAudio
+    edge_agent = generate_edgeAgent()
+    
     audio = pyaudio.PyAudio()
-
-    # Open Stream
     stream = audio.open(format=FORMAT, channels=CHANNELS, 
                         rate=RATE, input=True,
                         frames_per_buffer=CHUNK)
-
-    print("Recording...")
-
-    # Variable to store sound level
     sound_level_list = []
     last_time = time.time()
-
+    
+    cnt = 0
     while True:
+        #######################################
         ##### ---------- sound ---------- #####
+        
         current_time = time.time()
         over_threshold = False
 
@@ -54,28 +48,43 @@ def main():
         # Calculate mean sound level
         sound_level = np.average(np.abs(data))
         sound_level_list.append(sound_level)
+        
+        ##### ---------- sound ---------- #####
+        #######################################
 
         #######################################
         ##### --------- VISION ---------- #####
-        #######################################
-        img, plag, fps, video = process_frame(fps)  # img와 plag 혹은 img와 None을 받음
+        
+        img, plag, video = process_frame()  # img와 plag 혹은 img와 None을 받음
         
         if img is None and plag is None: # img, plag 둘 다 None이면 영상이 끝난것이니 종료
             print("No more frames to process or unable to open video. Exiting.")
             break
-        elif img is 0: # 1초가 지나지 않았을 때
-            pass
-        else:          # 1초(30프레임)마다 사진 보내기
-            upload_image(img)   
-            '''img 보내기'''
-            # cv2.imshow("img", img)
-            # if cv2.waitKey(1) & 0xFF == ord("q"):
-            #     break
-            
+        
+        print(plag)
+        show = cv2.resize(img, (0,0), fx=1.5, fy=1.5)
+        cv2.imshow("img", show)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+        
+        
         if plag is not None: # plag가 None이 아닌 것이 리턴된거면 is_accident이니 처리
-            # 사고가 감지되었을 때 처리
             plag += int(over_threshold)*10
-            print(f"Accident detected, processing plag data: {plag}") # 요 출력문 나오면서 plag 처리함
+            if plag > 100: plag=100        
+            if plag > 50:
+                global MAX
+                global is_on
+                MAX = plag
+                is_on = True
+            
+            if is_on:
+                cnt+=1
+                if cnt > 30:
+                    cnt=0
+                    is_on=False
+                plag = MAX
+                
+
             edge_data = receive_plag_data(plag, "Device1")  # Data.py를 통해 EdgeData로 변환
             sendDataToDataHub(edge_agent, edge_data)  # 변환된 EdgeData를 EdgeAgent.py를 통해 데이터 허브로 전송
 
@@ -88,6 +97,9 @@ def main():
                 out.write(video[i][0])
             out.release()
             os.system("python Stream.py &")
+            
+        ##### ---------- sound ---------- #####
+        #######################################
 
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+import time
 from wisepaasdatahubedgesdk.Model.Edge import EdgeData, EdgeTag
 
 def create_edge_data_from_plag(plag, device_id, tag_name):
