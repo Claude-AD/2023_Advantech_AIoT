@@ -9,7 +9,7 @@ def stream_accident():
     input_video = './audio.mp4'
     
     stream_url = 'rtmp://a.rtmp.youtube.com/live2'
-    stream_key = '6a3r-0zzr-gbt4-53ur-045x'  # YouTube에서 제공하는 스트림 키
+    stream_key = ''  # YouTube에서 제공하는 스트림 키
     
     # ffmpeg 스트림 설정
     

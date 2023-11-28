@@ -5,7 +5,7 @@ from collections import deque
 import copy
 
 # video = './dataset/test/main.mp4'
-video = 2
+video = 0
 cap = cv2.VideoCapture(video)
 
 model = YOLO('./model/yolov8m.pt')

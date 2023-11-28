@@ -62,7 +62,7 @@ def main():
             break
         
         print(plag)
-        show = cv2.resize(img, (0,0), fx=1.5, fy=1.5)
+        show = cv2.resize(img, (0,0), fx=0.7, fy=0.7)
         cv2.imshow("img", show)
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
@@ -88,17 +88,17 @@ def main():
             edge_data = receive_plag_data(plag, "Device1")  # Data.py를 통해 EdgeData로 변환
             sendDataToDataHub(edge_agent, edge_data)  # 변환된 EdgeData를 EdgeAgent.py를 통해 데이터 허브로 전송
 
-        if video is not None:
-            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            f = 30.0
-            h, w, l = video[0][0].shape
-            out = cv2.VideoWriter('output.mp4', fourcc, f, (w, h))
-            for i in range(len(video)):
-                out.write(video[i][0])
-            out.release()
-            os.system("python Stream.py &")
+       if video is not None:
+           fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+           f = 30.0
+           h, w, l = video[0][0].shape
+           out = cv2.VideoWriter('output.mp4', fourcc, f, (w, h))
+           for i in range(len(video)):
+               out.write(video[i][0])
+           out.release()
+           os.system("python Stream.py &")
             
-        ##### ---------- sound ---------- #####
+        ##### ---------- VISION ---------- #####
         #######################################
 
 if __name__ == "__main__":
